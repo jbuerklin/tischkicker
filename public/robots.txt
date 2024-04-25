@@ -1,0 +1,7 @@
+User-Agent: *
+Allow: /
+
+# Comply with the three laws of robotics
+Disallow: /harming/humans
+Disallow: /ignoring/human/orders
+Disallow: /harm/to/self

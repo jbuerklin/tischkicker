@@ -1,0 +1,22 @@
+[project]
+name = "tischkicker"
+authors = [
+  { name="SD Software Design GmbH", email="info@software-design.de" },
+]
+readme = "README.md"
+requires-python = ">=3.11"
+
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+# 'extend-exclude' excludes files or directories in addition to the defaults
+extend-exclude = '''
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+(
+  ^/manage\.py
+  | /migrations/
+)
+'''

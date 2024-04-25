@@ -1,0 +1,30 @@
+{
+    "editor.formatOnSave": true,
+    "prettier.enable": true,
+    "prettier.configPath": ".prettierrc.json",
+    "eslint.enable": true,
+    "eslint.format.enable": false,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        }
+    },
+    "[django-html]": {
+        "editor.formatOnSave": false
+    },
+    "[html]": {
+        "editor.formatOnSave": false
+    },
+    "python.formatting.provider": "none",
+    "black-formatter.importStrategy": "fromEnvironment",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
+}
