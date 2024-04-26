@@ -13,7 +13,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         "braschuene/index.html",
         {
-            "debts": Debt.objects.order_by("-date"),
+            "debts": Debt.objects.order_by("-date", "-pk"),
             "users": User.objects.order_by("username"),
         },
         {

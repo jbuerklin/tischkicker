@@ -44,8 +44,9 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-    <h2 class="mt-5">Schuldentabelle</h2>
-    <table class="table">
+    <h2 class="mt-5">Braschünen</h2>
+    <button id="toggleDoneDebts" class="btn btn-secondary">Erledigte Einträge ein-/ausblenden</button>
+    <table id="debtTable" class="table">
         <tr>
             <th>Von</th>
             <th>An</th>
@@ -55,7 +56,7 @@
             <th>Erledigt</th>
         </tr>
         {% for debt in debts %}
-        <tr>
+        <tr {% if debt.done %}class="table-success"{% endif %}>
             <td>{{ debt.get_senders }}</td>
             <td>{{ debt.get_receivers }}</td>
             <td>{% if debt.amount == 24 %}<strong>1 Kiste</strong>{% else %}{{ debt.amount }}{% endif %}</td>
@@ -65,7 +66,7 @@
                 {% if debt.done %}<i class="bi bi-check text-success"></i>{% else %}
                 <a href="/debt_done/{{ debt.id }}">Erledigt &raquo;</a>
                 |
-                <a href="/debt_double/{{ debt.id }}">Verdoppeln &raquo;</a>
+                <a href="/debt_double/{{ debt.id }}" class="debt_double">Verdoppeln &raquo;</a>
                 {% endif %}</td>
         </tr>
         {% endfor %}
