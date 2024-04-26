@@ -28,8 +28,8 @@ venv
 *.pyc
 __pycache__
 *.sqlite3
-settings/__init__.py
-settings/local.py
+tischkicker/settings/__init__.py
+tischkicker/settings/local.py
 !.vscode/sample.settings.json
 !.vscode/extensions.json
 
@@ -37,3 +37,4 @@ settings/local.py
 jsconfig.json
 vite_build
 .vite
+.hotfile
