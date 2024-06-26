@@ -1,0 +1,162 @@
+{% extends "braschüne/base.html" %}
+{% load partials %}
+
+{% partialdef kicker %}
+<div class="text-center" style="border: 1px solid black; border-bottom: 1px solid orange; border-top: 1px solid #23985D;">
+    <div class="pb-5" style="color: #23985D;">
+        Team easyVerein
+    </div>
+    <div style="color: orange;">
+        Team Software-Design
+    </div>
+</div>
+{% endpartialdef %}
+
+{% partialdef add-player %}
+<div id="add-player-{{ side }}" class="add-player" {% if oob %}hx-swap-oob="true"{% endif %}>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          +
+        </button>
+        <ul class="dropdown-menu">
+            {% for user in users %}
+            <li><a class="dropdown-item" href="#" hx-post="/add-player/{{ side }}/{{ user.id }}" hx-disabled-elt="this">{{ user.username }} ({{ user.profile.sicherungskasten }} Bier)</a></li>
+            {% endfor %}
+        </ul>
+      </div>
+</div>
+{% endpartialdef %}
+
+{% partialdef player-badge %}
+{% if player %}
+<div class="player-badge position-relative">
+    <img src="{{ player.profile.image }}" alt="{{ player }}" style="border-radius: 100%; max-width:6em; max-height:6em;">
+    <div sse-swap="player-sicherungskasten-badge-{{ player.id }}">
+        {% partialdef player-sicherungskasten-badge inline=True %}
+        <div class="position-absolute top-0 end-0 badge rounded-pill {% if player.profile.sicherungskasten >= 6 %}bg-success{% elif player.profile.sicherungskasten >= 2 %}bg-warning{% else %}bg-danger{% endif %}">{{ player.profile.sicherungskasten }}</div>
+        {% endpartialdef %}
+    </div>
+    {% if side %}
+    <div>
+        <button class="btn btn-danger position-absolute bottom-0 end-0" hx-post="/remove-player/{{ side }}/{{ player.id }}" hx-disabled-elt="this">x</button>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endpartialdef %}
+
+{% partialdef player-selection %}
+<div id="player-selection-{{ side }}" class="d-flex justify-content-around align-items-center" sse-swap="player-selection-{{ side }}" hx-swap="outerHTML">
+    {% with player=leftPlayer %}
+        {% partial player-badge %}
+    {% endwith %}
+
+    {% if leftPlayer and rightPlayer %}
+        <button class="btn btn-secondary" hx-post="/swap-players/{{ side }}" hx-swap="none" hx-disabled-elt="this">&larr; Spieler tauschen &rarr;</button>
+    {% else %}
+        {% partial add-player %}
+    {% endif %}
+
+    {% with player=rightPlayer %}
+        {% partial player-badge %}
+    {% endwith %}
+</div>
+{% if updatePlayerSelect %}
+    {% with oob=True side=otherSide %}
+        {% partial add-player %}
+    {% endwith %}
+{% endif %}
+{% endpartialdef %}
+
+
+{% partialdef start-game %}
+<div>
+    <h1>Neues Spiel Starten</h1>
+    {% with side="easyVerein" leftPlayer=game.ev_offensive rightPlayer=game.ev_defensive %}
+        {% partial player-selection %}
+    {% endwith %}
+    {% partial kicker %}
+    {% with side="software-design" leftPlayer=game.sd_defensive rightPlayer=game.sd_offensive %}
+        {% partial player-selection %}
+    {% endwith %}
+
+    <button class="btn btn-primary" hx-post="/next-round" hx-swap="none" hx-disabled-elt="this">Spiel starten</button>
+</div>
+{% endpartialdef %}
+
+{% partialdef playing-game %}
+<div>
+    <h1>Runde {{ game.game_round|add:1 }}: {{ game.round_name }}</h1>
+    <div class="d-flex justify-content-around align-items-center">
+        {% for player in game.ev_players %}
+            {% partial player-badge %}
+        {% endfor %}
+    </div>
+    {% partial kicker %}
+    <div class="d-flex justify-content-around align-items-center">
+        {% for player in game.sd_players %}
+            {% partial player-badge %}
+        {% endfor %}
+    </div>
+    <form hx-post="/next-round" hx-swap="none" hx-disabled-elt="find button">
+        <div>
+            <label for="ev_score">easyVerein:</label>
+            <input type="number" name="ev_score" id="ev_score" value="0">
+        </div>
+        <div>
+            <label for="sd_score">Software-Design:</label>
+            <input type="number" name="sd_score" id="sd_score" value="0">
+        </div>
+
+        <button class="btn btn-primary">Nächste Runde</button>
+    </form>
+    <button class="btn btn-secondary float-end" hx-post="/end-game" hx-swap="none" hx-disabled-elt="this">Spiel beenden</button>
+</div>
+{% endpartialdef %}
+
+{% block content %}
+<div hx-ext="sse" sse-connect="/sse">
+    <div id="game" sse-swap="game">
+        {% if game.game_round == -1 %}
+        {% partial start-game %}
+        {% else %}
+        {% partial playing-game %}
+        {% endif %}
+    </div>
+
+    {% partialdef beer-list inline=True %}
+    <div id="beer-list" class="mt-5">
+        <h2>Schulden</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Von</th>
+                    <th>An</th>
+                    <th>Anzahl</th>
+                    <th>Datum</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody sse-swap="beer" hx-swap="afterbegin">
+                {% partialdef beer-rows inline=True %}
+                {% for beer in beers %}
+                    <tr id="row-{{ beer.id }}" {% if beer.is_done %}class="table-success"{% endif %} {% if beer.updated %}hx-swap-oob="outerHTML"{% elif beer.deleted %}hx-swap-oob="delete"{% endif %}>
+                        <td>{{ beer.from_user }}</td>
+                        <td>{{ beer.to_user }}</td>
+                        <td>{{ beer.get_amount }}</td>
+                        <td>{{ beer.date|date:"d.m.Y" }}</td>
+                        <td>
+                            {% if not beer.is_done %}
+                            <button class="btn btn-success" hx-post="/done-beer/{{ beer.id }}" hx-disabled-elt="this">Erledigt</button>
+                            {% endif %}
+                            <button class="btn btn-danger" hx-post="/delete-beer/{{ beer.id }}" hx-disabled-elt="this">x</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% endpartialdef %}
+            </tbody>
+        </table>
+    </div>
+    {% endpartialdef %}
+    {% endblock content %}
+</div>

@@ -32,9 +32,4 @@ tischkicker/settings/__init__.py
 tischkicker/settings/local.py
 !.vscode/sample.settings.json
 !.vscode/extensions.json
-
-# Vite
-jsconfig.json
-vite_build
-.vite
-.hotfile
+dump.rdb

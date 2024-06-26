@@ -1,5 +1,7 @@
-Django==5.0.4
-django_vite_plugin==3.0.0
-django-allauth==0.62.0
-django_csp==3.8
-django-sh @ git+https://gitlab.com/software-design-public/django-sh.git@9b2afe63dd39497b3b0be9c30d8dc56e72269d27
+crispy-bootstrap5==2024.2
+daphne==4.1.2
+Django==5.0.6
+django-allauth==0.63.3
+django-crispy-forms==2.2
+django-template-partials==24.2
+redis==5.0.6

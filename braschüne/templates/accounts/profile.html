@@ -1,0 +1,27 @@
+{% extends "braschüne/base.html" %}
+{% load partials %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profil{% endblock title %}
+
+{% block content %}
+<div class="mt-3" hx-ext="sse" sse-connect="/profile-events">
+    <div>
+        <div id="profile-form" sse-swap="profile-form">
+        {% partialdef profile-form inline=True %}
+            <img src="{{ request.user.profile.image }}" alt="{{ request.user }}" style="border-radius: 100%; max-width:12em; max-height:12em;" class="border">
+            {% crispy profile_form %}
+        {% endpartialdef %}
+        </div>
+
+        <div class="mt-5">
+        {% partialdef user-form inline=True %}
+            {% crispy user_form %}
+        {% endpartialdef %}
+        </div>
+    </div>
+
+
+    {% include "braschüne/index.html#beer-list" %}
+</div>
+{% endblock content %}

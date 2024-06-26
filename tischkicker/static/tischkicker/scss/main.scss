@@ -1,8 +1,0 @@
-@import "bootstrapOverrides";
-@import "@node_modules/bootstrap/scss/bootstrap";
-
-$bootstrap-icons-font-dir: "@node_modules_static/bootstrap-icons/font/fonts";
-@import '@node_modules/bootstrap-icons/font/bootstrap-icons.scss';
-
-/* Import all your scss here */
-@import "braschuene/static/braschuene/scss/index"
