@@ -2,13 +2,27 @@
 {% load partials %}
 
 {% partialdef kicker %}
-<div class="text-center" style="border: 1px solid black; border-bottom: 1px solid orange; border-top: 1px solid #23985D;">
-    <div class="pb-5" style="color: #23985D;">
-        Team easyVerein
+<div class="d-flex justify-content-between" style="border: 1px solid black; border-bottom: 1px solid orange; border-top: 1px solid #23985D;">
+    {% if playing %}
+    <button class="btn btn-warning" style="background-color: orange;" hx-post="/goal/software-design" hx-disabled-elt="this">TOR</button>
+    {% endif %}
+    <div class="align-self-center">
+        <h1 style="color: orange;">{{ game.sd_score }}</h1>
     </div>
-    <div style="color: orange;">
-        Team Software-Design
+    <div class="text-center">
+        <div class="pb-5" style="color: #23985D;">
+            Team easyVerein
+        </div>
+        <div style="color: orange;">
+            Team Software-Design
+        </div>
     </div>
+    <div class="align-self-center">
+        <h1 style="color: #23985D;">{{ game.ev_score }}</h1>
+    </div>
+    {% if playing %}
+    <button class="btn btn-success" style="background-color: #23985d;" hx-post="/goal/easyverein" hx-disabled-elt="this">TOR</button>
+    {% endif %}
 </div>
 {% endpartialdef %}
 
@@ -92,24 +106,15 @@
             {% partial player-badge %}
         {% endfor %}
     </div>
+    {% with playing=True %}
     {% partial kicker %}
+    {% endwith %}
     <div class="d-flex justify-content-around align-items-center">
         {% for player in game.sd_players %}
             {% partial player-badge %}
         {% endfor %}
     </div>
-    <form hx-post="/next-round" hx-swap="none" hx-disabled-elt="find button">
-        <div>
-            <label for="ev_score">easyVerein:</label>
-            <input type="number" name="ev_score" id="ev_score" value="0">
-        </div>
-        <div>
-            <label for="sd_score">Software-Design:</label>
-            <input type="number" name="sd_score" id="sd_score" value="0">
-        </div>
-
-        <button class="btn btn-primary">Nächste Runde</button>
-    </form>
+    <button class="btn btn-primary" hx-post="/next-round" hx-disabled-elt="this">Nächste Runde</button>
     <button class="btn btn-secondary float-end" hx-post="/end-game" hx-swap="none" hx-disabled-elt="this">Spiel beenden</button>
 </div>
 {% endpartialdef %}

@@ -25,6 +25,7 @@ urlpatterns = [
     path("add-player/<str:side>/<int:playerId>", views.addPlayer, name="add-player"),
     path("remove-player/<str:side>/<int:playerId>", views.removePlayer, name="remove-player"),
     path("swap-players/<str:side>", views.swapPlayers, name="swap-players"),
+    path("goal/<str:side>", views.goal, name="swap-players"),
     path("next-round", views.nextRound, name="next-round"),
     path("end-game", views.endGame, name="end-game"),
     path("sse", views.sse, name="sse"),

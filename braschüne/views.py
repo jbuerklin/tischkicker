@@ -81,6 +81,13 @@ def swapPlayers(request, side: str):
 
     return addToStream(request, f'player-selection-{side}', 'braschüne/index.html#player-selection', side=side)
 
+
+def goal(request, side: str):
+    game = getGame()
+    game.add_goal(side)
+
+    return addToStream(request, 'game', 'braschüne/index.html#playing-game')
+
 def nextRound(request):
     game = getGame()
     if game.game_round == -1 and not (game.sd_offensive and game.sd_defensive and game.ev_offensive and game.ev_defensive):
@@ -106,7 +113,7 @@ def nextRound(request):
             game.ev_player = ev_player
             game.save()
 
-    newBeers = game.nextRound(int(request.POST.get('sd_score', 0)), int(request.POST.get('ev_score', 0)))
+    newBeers = game.nextRound()
     if newBeers:
         addToStream(request, 'beer', 'braschüne/index.html#beer-rows', context={'beers': newBeers})
     return addToStream(request, 'game', 'braschüne/index.html#playing-game')
