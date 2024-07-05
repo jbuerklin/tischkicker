@@ -114,8 +114,9 @@
             {% partial player-badge %}
         {% endfor %}
     </div>
-    <button class="btn btn-primary" hx-post="/next-round" hx-disabled-elt="this">Nächste Runde</button>
-    <button class="btn btn-secondary float-end" hx-post="/end-game" hx-swap="none" hx-disabled-elt="this">Spiel beenden</button>
+    <button class="btn btn-primary" hx-post="/next-round" hx-vals='{"payout": true}' hx-disabled-elt="this" hx-swap="none">Auszahlen!</button>
+    <button class="btn btn-secondary" hx-post="/next-round" hx-disabled-elt="this" hx-swap="none">Nächste Runde</button>
+    <button class="btn btn-danger float-end" hx-post="/end-game" hx-swap="none" hx-disabled-elt="this">Spiel beenden</button>
 </div>
 {% endpartialdef %}
 
@@ -163,5 +164,5 @@
         </table>
     </div>
     {% endpartialdef %}
-    {% endblock content %}
 </div>
+{% endblock content %}

@@ -88,6 +88,14 @@ def goal(request, side: str):
 
     return addToStream(request, 'game', 'braschüne/index.html#playing-game')
 
+def goalButton(request, side: str):
+    game = getGame()
+    if request.method == 'POST':
+        if game.add_goal(side):
+            addToStream(request, 'game', 'braschüne/index.html#playing-game')
+        return HttpResponse()
+    return render(request, 'braschüne/goalButton.html', {'side': side})
+
 def nextRound(request):
     game = getGame()
     if game.game_round == -1 and not (game.sd_offensive and game.sd_defensive and game.ev_offensive and game.ev_defensive):
@@ -113,7 +121,7 @@ def nextRound(request):
             game.ev_player = ev_player
             game.save()
 
-    newBeers = game.nextRound()
+    newBeers = game.nextRound(request.POST.get('payout', False))
     if newBeers:
         addToStream(request, 'beer', 'braschüne/index.html#beer-rows', context={'beers': newBeers})
     return addToStream(request, 'game', 'braschüne/index.html#playing-game')
@@ -125,8 +133,6 @@ def endGame(request):
     game.save()
 
     return addToStream(request, 'game', 'braschüne/index.html#start-game')
-
-
 
 def doneBeer(request, beerId: int):
     beer = Beer.objects.get(id=beerId)

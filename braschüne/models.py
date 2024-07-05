@@ -50,11 +50,13 @@ class Game(models.Model):
         abstract = True
 
     def add_goal(self, side: str) -> None:
-        if side == "software-design":
-            self.sd_score += 1
-        else:
-            self.ev_score += 1
-        self.save()
+        if self.game_round != -1:
+            if side == "software-design":
+                self.sd_score += 1
+            else:
+                self.ev_score += 1
+            self.save()
+            return True
 
     def add_player(self, side: str, player: User):
         raise NotImplementedError("Subclass must implement abstract method add_player")
@@ -65,7 +67,7 @@ class Game(models.Model):
     def swap_players(self, side: str):
         raise NotImplementedError("Subclass must implement abstract method swap_players")
 
-    def nextRound(self) -> list[Beer]:
+    def nextRound(self, payout: bool = False) -> list[Beer]:
         raise NotImplementedError("Subclass must implement abstract method swap_players")
 
     @property
@@ -83,20 +85,22 @@ class TwoPlayersGame(Game):
     def __str__(self):
         return f"{self.sd_player} vs {self.ev_player}"
 
-    def nextRound(self) -> list[Beer]:
+    def nextRound(self, payout: bool = False) -> list[Beer]:
         newBeers = []
-        is_crate = False
-        if self.sd_score == 10:
-            self.sd_score = 24
-            is_crate = True
-        if self.ev_score == 10:
-            self.ev_score = 24
-            is_crate = True
 
-        if self.sd_score > self.ev_score and self.ev_score == 0 and self.sd_score % 2 == 0:
-            newBeers.append(Beer.objects.create(from_user=self.ev_player, to_user=self.sd_player, amount=self.sd_score, is_crate=is_crate))
-        elif self.ev_score > self.sd_score and self.sd_score == 0 and self.ev_score % 2 == 0:
-            newBeers.append(Beer.objects.create(from_user=self.sd_player, to_user=self.ev_player, amount=self.ev_score, is_crate=is_crate))
+        if payout:
+            is_crate = False
+            if self.sd_score == 10:
+                self.sd_score = 24
+                is_crate = True
+            if self.ev_score == 10:
+                self.ev_score = 24
+                is_crate = True
+
+            if self.sd_score > self.ev_score and self.ev_score == 0 and self.sd_score % 2 == 0:
+                newBeers.append(Beer.objects.create(from_user=self.ev_player, to_user=self.sd_player, amount=self.sd_score, is_crate=is_crate))
+            elif self.ev_score > self.sd_score and self.sd_score == 0 and self.ev_score % 2 == 0:
+                newBeers.append(Beer.objects.create(from_user=self.sd_player, to_user=self.ev_player, amount=self.ev_score, is_crate=is_crate))
 
         if self.game_round == -1:
             self.round_name = "Los geht's!"
@@ -127,22 +131,23 @@ class ThreePlayersGame(Game):
     def __str__(self):
         return f"{self.sd_player} vs {self.ev_offensive} and {self.ev_defensive}"
 
-    def nextRound(self) -> list[Beer]:
+    def nextRound(self, payout: bool = False) -> list[Beer]:
         newBeers = []
-        is_crate = False
-        if self.sd_score == 10:
-            self.sd_score = 24
-            is_crate = True
-        if self.ev_score == 10:
-            self.ev_score = 24
-            is_crate = True
+        if payout:
+            is_crate = False
+            if self.sd_score == 10:
+                self.sd_score = 24
+                is_crate = True
+            if self.ev_score == 10:
+                self.ev_score = 24
+                is_crate = True
 
-        if self.sd_score > self.ev_score and self.ev_score == 0 and self.sd_score % 2 == 0:
-            newBeers.append(Beer.objects.create(from_user=self.ev_offensive, to_user=self.sd_player, amount=self.sd_score / 2, is_crate=is_crate))
-            newBeers.append(Beer.objects.create(from_user=self.ev_defensive, to_user=self.sd_player, amount=self.sd_score / 2, is_crate=is_crate))
-        elif self.ev_score > self.sd_score and self.sd_score == 0 and self.ev_score % 2 == 0:
-            newBeers.append(Beer.objects.create(from_user=self.sd_player, to_user=self.ev_defensive, amount=self.ev_score / 2, is_crate=is_crate))
-            newBeers.append(Beer.objects.create(from_user=self.sd_player, to_user=self.ev_offensive, amount=self.ev_score / 2, is_crate=is_crate))
+            if self.sd_score > self.ev_score and self.ev_score == 0 and self.sd_score % 2 == 0:
+                newBeers.append(Beer.objects.create(from_user=self.ev_offensive, to_user=self.sd_player, amount=self.sd_score / 2, is_crate=is_crate))
+                newBeers.append(Beer.objects.create(from_user=self.ev_defensive, to_user=self.sd_player, amount=self.sd_score / 2, is_crate=is_crate))
+            elif self.ev_score > self.sd_score and self.sd_score == 0 and self.ev_score % 2 == 0:
+                newBeers.append(Beer.objects.create(from_user=self.sd_player, to_user=self.ev_defensive, amount=self.ev_score / 2, is_crate=is_crate))
+                newBeers.append(Beer.objects.create(from_user=self.sd_player, to_user=self.ev_offensive, amount=self.ev_score / 2, is_crate=is_crate))
         if self.game_round == -1:
             self.round_name = "Los geht's!"
         else:
@@ -220,22 +225,23 @@ class FourPlayersGame(Game):
             self.ev_offensive, self.ev_defensive = self.ev_defensive, self.ev_offensive
         self.save()
 
-    def nextRound(self) -> list[Beer]:
+    def nextRound(self, payout: bool = False) -> list[Beer]:
         newBeers = []
-        is_crate = False
-        if self.sd_score == 10:
-            self.sd_score = 24
-            is_crate = True
-        if self.ev_score == 10:
-            self.ev_score = 24
-            is_crate = True
+        if payout:
+            is_crate = False
+            if self.sd_score == 10:
+                self.sd_score = 24
+                is_crate = True
+            if self.ev_score == 10:
+                self.ev_score = 24
+                is_crate = True
 
-        if self.sd_score > self.ev_score and self.ev_score == 0 and self.sd_score % 2 == 0:
-            newBeers.append(Beer.objects.create(from_user=self.ev_offensive, to_user=self.sd_defensive, amount=self.sd_score / 2, is_crate=is_crate))
-            newBeers.append(Beer.objects.create(from_user=self.ev_defensive, to_user=self.sd_offensive, amount=self.sd_score / 2, is_crate=is_crate))
-        elif self.ev_score > self.sd_score and self.sd_score == 0 and self.ev_score % 2 == 0:
-            newBeers.append(Beer.objects.create(from_user=self.sd_offensive, to_user=self.ev_defensive, amount=self.ev_score / 2, is_crate=is_crate))
-            newBeers.append(Beer.objects.create(from_user=self.sd_defensive, to_user=self.ev_offensive, amount=self.ev_score / 2, is_crate=is_crate))
+            if self.sd_score > self.ev_score and self.ev_score == 0 and self.sd_score % 2 == 0:
+                newBeers.append(Beer.objects.create(from_user=self.ev_offensive, to_user=self.sd_defensive, amount=self.sd_score / 2, is_crate=is_crate))
+                newBeers.append(Beer.objects.create(from_user=self.ev_defensive, to_user=self.sd_offensive, amount=self.sd_score / 2, is_crate=is_crate))
+            elif self.ev_score > self.sd_score and self.sd_score == 0 and self.ev_score % 2 == 0:
+                newBeers.append(Beer.objects.create(from_user=self.sd_offensive, to_user=self.ev_defensive, amount=self.ev_score / 2, is_crate=is_crate))
+                newBeers.append(Beer.objects.create(from_user=self.sd_defensive, to_user=self.ev_offensive, amount=self.ev_score / 2, is_crate=is_crate))
         if self.game_round == -1:
             self.round_name = "Los geht's!"
         else:

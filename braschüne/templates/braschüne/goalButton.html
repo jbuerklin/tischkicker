@@ -1,0 +1,12 @@
+{% extends "braschüne/base.html" %}
+
+{% block header %}{% endblock header %}
+{% block content %}
+<div>
+    <button hx-post="" hx-swap="none"  hx-disabled-elt="this" style="background-color: {% if side == "software-design" %}orange{% else %}#23985D{% endif %}; position: absolute; top: 0; left: 0; width: 100%; height: 100vh;">
+        <h1>
+            TOR!
+        </h1>
+    </button>
+</div>
+{% endblock content %}

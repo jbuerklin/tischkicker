@@ -22,6 +22,8 @@ from braschüne import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('goal-button/<str:side>', views.goalButton, name='goal-button'),
+
     path("add-player/<str:side>/<int:playerId>", views.addPlayer, name="add-player"),
     path("remove-player/<str:side>/<int:playerId>", views.removePlayer, name="remove-player"),
     path("swap-players/<str:side>", views.swapPlayers, name="swap-players"),
