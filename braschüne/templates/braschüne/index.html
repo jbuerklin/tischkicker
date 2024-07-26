@@ -50,6 +50,9 @@
         <div class="position-absolute top-0 end-0 badge rounded-pill {% if player.profile.sicherungskasten >= 6 %}bg-success{% elif player.profile.sicherungskasten >= 2 %}bg-warning{% else %}bg-danger{% endif %}">{{ player.profile.sicherungskasten }}</div>
         {% endpartialdef %}
     </div>
+    {% if player.profile.is_online_in_inside %}
+    <div class="position-absolute top-100 start-0 badge rounded-pill bg-danger" style="transform: translateY(-100%) !important;">Nicht ausgeloggt</div>
+    {% endif %}
     {% if side %}
     <div>
         <button class="btn btn-danger position-absolute bottom-0 end-0" hx-post="/remove-player/{{ side }}/{{ player.id }}" hx-disabled-elt="this">x</button>

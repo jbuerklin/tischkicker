@@ -15,7 +15,8 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-    def log_out_inside(self):
+    @property
+    def is_online_in_inside(self):
         if self.inside_tag_id:
             data = None
             try:
@@ -25,13 +26,18 @@ class Profile(models.Model):
             except Exception as e:
                 print(e)
 
-            if data['working'] == 'true':
-                try:
-                    response = requests.get(f"https://inside.software-design.de/timetracking/toggle_tag_id/{self.inside_tag_id}/")
-                    response.raise_for_status()
-                    data = response.json()
-                except Exception as e:
-                    print(e)
+            return data['working'] == 'true'
+
+        return False
+
+    def log_out_inside(self):
+        if self.is_online_in_inside:
+            try:
+                response = requests.get(f"https://inside.software-design.de/timetracking/toggle_tag_id/{self.inside_tag_id}/")
+                response.raise_for_status()
+                data = response.json()
+            except Exception as e:
+                print(e)
 
 
 class Beer(models.Model):

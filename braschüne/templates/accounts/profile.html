@@ -9,7 +9,12 @@
     <div>
         <div id="profile-form" sse-swap="profile-form">
         {% partialdef profile-form inline=True %}
-            <img src="{{ request.user.profile.image }}" alt="{{ request.user }}" style="border-radius: 100%; max-width:12em; max-height:12em;" class="border">
+            <div class="position-relative">
+                <img src="{{ request.user.profile.image }}" alt="{{ request.user }}" style="border-radius: 100%; max-width:12em; max-height:12em;" class="border">
+                {% if request.user.profile.is_online_in_inside %}
+                <div class="position-absolute top-0 start-0  badge rounded-pill bg-danger">Nicht ausgeloggt</div>
+                {% endif %}
+            </div>
             {% crispy profile_form %}
         {% endpartialdef %}
         </div>
