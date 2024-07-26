@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import requests
 
 
 # Create your models here.
@@ -9,9 +10,28 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.URLField(default="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png")
     sicherungskasten = models.SmallIntegerField(default=0, verbose_name="Bier im Sicherungskasten")
+    inside_tag_id = models.CharField(max_length=64, default="", blank=True, verbose_name="Inside Tag ID", help_text="ID des Inside Tags für die Anwesenheitserkennung und auto-log-out")
 
     def __str__(self):
         return self.user.username
+
+    def log_out_inside(self):
+        if self.inside_tag_id:
+            data = None
+            try:
+                response = requests.get(f"https://inside.software-design.de/timetracking/api/is_currently_working/?tag_id={self.inside_tag_id}")
+                response.raise_for_status()
+                data = response.json()
+            except Exception as e:
+                print(e)
+
+            if data['working'] == 'true':
+                try:
+                    response = requests.get(f"https://inside.software-design.de/timetracking/toggle_tag_id/{self.inside_tag_id}/")
+                    response.raise_for_status()
+                    data = response.json()
+                except Exception as e:
+                    print(e)
 
 
 class Beer(models.Model):

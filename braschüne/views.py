@@ -98,28 +98,34 @@ def goalButton(request, side: str):
 
 def nextRound(request):
     game = getGame()
-    if game.game_round == -1 and not (game.sd_offensive and game.sd_defensive and game.ev_offensive and game.ev_defensive):
-        if (game.sd_offensive or game.sd_defensive) and (game.ev_offensive and game.ev_defensive):
-            sd_player = game.sd_offensive or game.sd_defensive
-            ev_offensive = game.ev_offensive
-            ev_defensive = game.ev_defensive
-            game.delete()
+    if game.game_round == -1:
+        # log out players
+        for player in game.sd_players + game.ev_players:
+            if player:
+                player.profile.log_out_inside()
 
-            game = ThreePlayersGame.objects.get_or_create(finished=False)[0]
-            game.sd_player = sd_player
-            game.ev_offensive = ev_offensive
-            game.ev_defensive = ev_defensive
-            game.save()
+        if not (game.sd_offensive and game.sd_defensive and game.ev_offensive and game.ev_defensive):
+            if (game.sd_offensive or game.sd_defensive) and (game.ev_offensive and game.ev_defensive):
+                sd_player = game.sd_offensive or game.sd_defensive
+                ev_offensive = game.ev_offensive
+                ev_defensive = game.ev_defensive
+                game.delete()
 
-        elif (game.sd_offensive or game.sd_defensive) and (game.ev_offensive or game.ev_defensive):
-            sd_player = game.sd_offensive or game.sd_defensive
-            ev_player = game.ev_offensive or game.ev_defensive
-            game.delete()
+                game = ThreePlayersGame.objects.get_or_create(finished=False)[0]
+                game.sd_player = sd_player
+                game.ev_offensive = ev_offensive
+                game.ev_defensive = ev_defensive
+                game.save()
 
-            game = TwoPlayersGame.objects.get_or_create(finished=False)[0]
-            game.sd_player = sd_player
-            game.ev_player = ev_player
-            game.save()
+            elif (game.sd_offensive or game.sd_defensive) and (game.ev_offensive or game.ev_defensive):
+                sd_player = game.sd_offensive or game.sd_defensive
+                ev_player = game.ev_offensive or game.ev_defensive
+                game.delete()
+
+                game = TwoPlayersGame.objects.get_or_create(finished=False)[0]
+                game.sd_player = sd_player
+                game.ev_player = ev_player
+                game.save()
 
     newBeers = game.nextRound(request.POST.get('payout', False))
     if newBeers:

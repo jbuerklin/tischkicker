@@ -14,8 +14,7 @@ class ProfileForm(ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['image', 'sicherungskasten']
-
+        fields = ['image', 'sicherungskasten', 'inside_tag_id']
 
 class UserForm(ModelForm):
     password = CharField(widget=PasswordInput())
