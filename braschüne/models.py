@@ -8,9 +8,18 @@ import requests
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.URLField(default="https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png")
+    image = models.URLField(default="https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg")
     sicherungskasten = models.SmallIntegerField(default=0, verbose_name="Bier im Sicherungskasten")
     inside_tag_id = models.CharField(max_length=64, default="", blank=True, verbose_name="Inside Tag ID", help_text="ID des Inside Tags für die Anwesenheitserkennung und auto-log-out")
+    isGuest = models.BooleanField(default=False)
+
+    imageFile = models.ImageField(upload_to="profile_pics", null=True, blank=True)
+
+    @property
+    def image_url(self):
+        if self.imageFile:
+            return self.imageFile.url
+        return self.image
 
     def __str__(self):
         return self.user.username

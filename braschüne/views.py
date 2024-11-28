@@ -11,6 +11,8 @@ from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.views import View
 from asgiref.sync import sync_to_async
+from django.shortcuts import redirect
+from django.db.utils import IntegrityError
 
 from braschüne.forms import ProfileForm, UserForm
 from braschüne.models import Beer, FourPlayersGame, Game, ThreePlayersGame, TwoPlayersGame
@@ -64,6 +66,28 @@ def addPlayer(request, side: str, playerId: int):
     otherSide = 'easyVerein' if side == 'software-design' else 'software-design'
     addToStream(request, f'player-selection-{otherSide}', 'braschüne/index.html#player-selection', otherSide)
     return addToStream(request, f'player-selection-{side}', 'braschüne/index.html#player-selection', side)
+
+def createPlayer(request, side: str):
+    if request.method == 'POST':
+        game = getGame()
+
+        try:
+            user = User.objects.create_user(request.POST['name'], password='-0as89jd-0an0-3rh')
+            if request.FILES.get('image'):
+                image = request.FILES['image']
+                user.profile.imageFile = image
+        except IntegrityError:
+            return render(request, 'braschüne/createPlayer.html', {'side': side, 'error': f'Der Benutzer {request.POST["name"]} existiert bereits. Bitte wähle einen anderen Namen'})
+
+        profile = user.profile
+        profile.isGuest = True
+        profile.save()
+        game.add_player(side, user)
+        otherSide = 'easyVerein' if side == 'software-design' else 'software-design'
+        addToStream(request, f'player-selection-{otherSide}', 'braschüne/index.html#player-selection', otherSide)
+        addToStream(request, f'player-selection-{side}', 'braschüne/index.html#player-selection', side)
+        return redirect('/')
+    return render(request, 'braschüne/createPlayer.html', {'side': side})
 
 
 def removePlayer(request, side: str, playerId: int):
@@ -137,7 +161,7 @@ def endGame(request):
     game = getGame()
     game.finished = True
     game.save()
-
+    User.objects.filter(profile__isGuest=True).delete()
     return addToStream(request, 'game', 'braschüne/index.html#start-game')
 
 def doneBeer(request, beerId: int):

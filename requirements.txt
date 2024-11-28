@@ -6,3 +6,4 @@ django-crispy-forms==2.2
 django-template-partials==24.2
 redis==5.0.6
 requests==2.32.3
+Pillow

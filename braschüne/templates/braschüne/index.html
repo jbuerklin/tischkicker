@@ -2,7 +2,7 @@
 {% load partials %}
 
 {% partialdef kicker %}
-<div class="d-flex justify-content-between" style="border: 1px solid black; border-bottom: 1px solid orange; border-top: 1px solid #23985D;">
+<div class="d-flex justify-content-between" style="border: 2px solid black; border-bottom: 2px solid orange; border-top: 2px solid #23985D; margin: 1em 0;">
     {% if playing %}
     <button class="btn btn-warning" style="background-color: orange;" hx-post="/goal/software-design" hx-disabled-elt="this">TOR</button>
     {% endif %}
@@ -30,12 +30,15 @@
 <div id="add-player-{{ side }}" class="add-player" {% if oob %}hx-swap-oob="true"{% endif %}>
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          +
+          Spieler hinzufügen
         </button>
         <ul class="dropdown-menu">
             {% for user in users %}
-            <li><a class="dropdown-item" href="#" hx-post="/add-player/{{ side }}/{{ user.id }}" hx-disabled-elt="this">{{ user.username }} ({{ user.profile.sicherungskasten }} Bier)</a></li>
+            <li><a class="dropdown-item" href="#" hx-post="/add-player/{{ side }}/{{ user.id }}" hx-disabled-elt="this">{{ user.username }}
+                {% comment %} ({{ user.profile.sicherungskasten }} Bier) {% endcomment %}
+            </a></li>
             {% endfor %}
+            <li><a class="dropdown-item" href="/create-player/{{ side }}"><i>+ Gast</i></a></li>
         </ul>
       </div>
 </div>
@@ -44,14 +47,14 @@
 {% partialdef player-badge %}
 {% if player %}
 <div class="player-badge position-relative">
-    <img src="{{ player.profile.image }}" alt="{{ player }}" style="border-radius: 100%; max-width:6em; max-height:6em;">
+    <img src="{{ player.profile.image_url }}" alt="{{ player }}" style="border-radius: 100%; max-width:6em; max-height:6em;">
     <div sse-swap="player-sicherungskasten-badge-{{ player.id }}">
         {% partialdef player-sicherungskasten-badge inline=True %}
-        <div class="position-absolute top-0 end-0 badge rounded-pill {% if player.profile.sicherungskasten >= 6 %}bg-success{% elif player.profile.sicherungskasten >= 2 %}bg-warning{% else %}bg-danger{% endif %}">{{ player.profile.sicherungskasten }}</div>
+        {% comment %} <div class="position-absolute top-0 end-0 badge rounded-pill {% if player.profile.sicherungskasten >= 6 %}bg-success{% elif player.profile.sicherungskasten >= 2 %}bg-warning{% else %}bg-danger{% endif %}">{{ player.profile.sicherungskasten }}</div> {% endcomment %}
         {% endpartialdef %}
     </div>
     {% if player.profile.is_online_in_inside %}
-    <div class="position-absolute top-100 start-0 badge rounded-pill bg-danger" style="transform: translateY(-100%) !important;">Nicht ausgeloggt</div>
+    {% comment %} <div class="position-absolute top-100 start-0 badge rounded-pill bg-danger" style="transform: translateY(-100%) !important;">Nicht ausgeloggt</div> {% endcomment %}
     {% endif %}
     {% if side %}
     <div>
@@ -117,7 +120,7 @@
             {% partial player-badge %}
         {% endfor %}
     </div>
-    <button class="btn btn-primary" hx-post="/next-round" hx-vals='{"payout": true}' hx-disabled-elt="this" hx-swap="none">Auszahlen!</button>
+    {% comment %} <button class="btn btn-primary" hx-post="/next-round" hx-vals='{"payout": true}' hx-disabled-elt="this" hx-swap="none">Auszahlen!</button> {% endcomment %}
     <button class="btn btn-secondary" hx-post="/next-round" hx-disabled-elt="this" hx-swap="none">Nächste Runde</button>
     <button class="btn btn-danger float-end" hx-post="/end-game" hx-swap="none" hx-disabled-elt="this">Spiel beenden</button>
 </div>
@@ -134,7 +137,7 @@
     </div>
 
     {% partialdef beer-list inline=True %}
-    <div id="beer-list" class="mt-5">
+    {% comment %} <div id="beer-list" class="mt-5">
         <h2>Schulden</h2>
         <table class="table">
             <thead>
@@ -165,7 +168,7 @@
                 {% endpartialdef %}
             </tbody>
         </table>
-    </div>
+    </div> {% endcomment %}
     {% endpartialdef %}
 </div>
 {% endblock content %}

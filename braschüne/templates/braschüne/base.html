@@ -13,18 +13,19 @@
 
     <title>{% block title %}Braschüne{% endblock title %}</title>
   </head>
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="container">
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' style="background-image: url('https://static.vecteezy.com/ti/fotos-kostenlos/p2/26750228-blauer-weihnachtshintergrund-mit-schneeflocken-kostenlos-foto.jpg');">
+    <div class="container" style="margin-top: 5em; background-color: #ffffff4a; padding: 2rem; border-radius: 2em;">
         {% block header %}
-          Hallo {{ request.user.username }}!
+          {% comment %} Hallo {{ request.user.username }}!
           {% if request.user.is_authenticated %}
           <a href="/">Spielen</a> | <a href="/accounts/profile/">Dein Profil</a> | <a href="/accounts/logout/">Ausloggen</a>
           {% else %}
           <a href="/accounts/login/">Einloggen</a>
-          {% endif %}
+          {% endif %} {% endcomment %}
         {% endblock header %}
         {% block content %}{% endblock content %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    {% block scripts %}{% endblock scripts %}
   </body>
 </html>

@@ -1,0 +1,108 @@
+{% extends "braschüne/base.html" %}
+{% load partials %}
+
+{% block title %}Neuer Spieler{% endblock title %}
+
+{% block content %}
+<div class="mt-3" hx-ext="sse" sse-connect="/profile-events">
+    <div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+            {% endif %}
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <div class="d-flex flex-column align-items-center">
+
+                <div id="profile-form" sse-swap="profile-form">
+                    <div class="display-cover d-flex">
+                        <div>
+                            <video autoplay></video>
+                            <div class="controls">
+                                <button type="button" class="btn btn-outline-success screenshot d-none" title="ScreenShot">Bild aufnehmen</button>
+                            </div>
+                            <canvas class="d-none"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex mt-5">
+                    <img class="screenshot-image" src="https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg" alt="" style="border-radius: 100%; max-width:6em; max-height:6em;">
+                    <div class="ms-3">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <input type="file" name="image" id="image-input" class="d-none">
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-success">
+                        Beitreten
+                    </button>
+                    <a href="/" class="btn btn-danger">
+                        Abbrechen
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    const controls = document.querySelector('.controls');
+    const video = document.querySelector('video');
+    const canvas = document.querySelector('canvas');
+    const screenshotImage = document.querySelector('img');
+    const screenshot = controls.querySelector('.screenshot')
+    let streamStarted = false;
+
+    const constraints = {
+      video: {
+        width: {
+          ideal: 540,
+        },
+        height: {
+          ideal: 540,
+        },
+      }
+    };
+
+
+    const startStream = async (constraints) => {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      handleStream(stream);
+    };
+
+    const handleStream = (stream) => {
+      video.srcObject = stream;
+      screenshot.classList.remove('d-none');
+      streamStarted = true;
+    };
+
+    const doScreenshot = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        screenshotImage.src = canvas.toDataURL('image/webp');
+        canvas.toBlob((blob) => {
+            let date = Date.now();
+            const file = new File([blob], `captured_image.png`, { type: 'image/png' });
+            console.log('file:::::::::::file', file); // This file object can now be uploaded to the server
+            // Create a DataTransfer object and use it to set the file into the input element
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            const fileInput = document.getElementById('image-input');
+            fileInput.files = dataTransfer.files;
+          }, 'image/png');
+      };
+
+      screenshot.onclick = doScreenshot;
+
+    if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
+        startStream(constraints);
+      }
+</script>
+{% endblock  %}

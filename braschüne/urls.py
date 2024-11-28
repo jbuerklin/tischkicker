@@ -30,6 +30,7 @@ urlpatterns = [
     path("goal/<str:side>", views.goal, name="swap-players"),
     path("next-round", views.nextRound, name="next-round"),
     path("end-game", views.endGame, name="end-game"),
+    path("create-player/<str:side>", views.createPlayer, name="create-player"),
     path("sse", views.sse, name="sse"),
 
     path("done-beer/<int:beerId>", views.doneBeer, name="done-beer"),
