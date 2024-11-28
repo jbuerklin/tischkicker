@@ -13,7 +13,7 @@
 
     <title>{% block title %}Braschüne{% endblock title %}</title>
   </head>
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' style="background-image: url('https://static.vecteezy.com/ti/fotos-kostenlos/p2/26750228-blauer-weihnachtshintergrund-mit-schneeflocken-kostenlos-foto.jpg');">
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' style="background-image: url('https://static.vecteezy.com/ti/fotos-kostenlos/p2/26750228-blauer-weihnachtshintergrund-mit-schneeflocken-kostenlos-foto.jpg'); background-repeat: no-repeat; background-size: cover;">
     <div class="container" style="margin-top: 5em; background-color: #ffffff4a; padding: 2rem; border-radius: 2em;">
         {% block header %}
           {% comment %} Hallo {{ request.user.username }}!

@@ -52,7 +52,6 @@
 
 {% block scripts %}
 <script>
-    document.querySelector('#name').addEventListener('click', () => navigator.virtualKeyboard.show());
     const controls = document.querySelector('.controls');
     const video = document.querySelector('video');
     const canvas = document.querySelector('canvas');
@@ -105,5 +104,8 @@
     if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
         startStream(constraints);
       }
+      document.querySelector('form').onsubmit = (e) => {
+          document.querySelector('button.btn-success').disabled = true;
+      };
 </script>
 {% endblock  %}
