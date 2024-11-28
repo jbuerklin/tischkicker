@@ -26,6 +26,7 @@ class Profile(models.Model):
 
     @property
     def is_online_in_inside(self):
+        return
         if self.inside_tag_id:
             data = None
             try:
@@ -40,6 +41,7 @@ class Profile(models.Model):
         return False
 
     def log_out_inside(self):
+        return
         if self.is_online_in_inside:
             try:
                 response = requests.get(f"https://inside.software-design.de/timetracking/toggle_tag_id/{self.inside_tag_id}/")
