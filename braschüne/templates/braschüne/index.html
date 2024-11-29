@@ -47,7 +47,7 @@
 {% partialdef player-badge %}
 {% if player %}
 <div class="player-badge position-relative">
-    <img src="{{ player.profile.image_url }}" alt="{{ player }}" style="border-radius: 100%; width: 7em; height: 7em; border: 3px solid {% if side == 'easyVerein' %}#23985d{% elif not side %}black{% else %}orange{% endif %}">
+    <img src="{{ player.profile.image_url }}" alt="{{ player }}" style="border-radius: 100%; width: 7em; height: 7em; object-fit: cover; border: 3px solid {% if side == 'easyVerein' %}#23985d{% elif not side %}black{% else %}orange{% endif %}">
     <div sse-swap="player-sicherungskasten-badge-{{ player.id }}">
         {% partialdef player-sicherungskasten-badge inline=True %}
         {% comment %} <div class="position-absolute top-0 end-0 badge rounded-pill {% if player.profile.sicherungskasten >= 6 %}bg-success{% elif player.profile.sicherungskasten >= 2 %}bg-warning{% else %}bg-danger{% endif %}">{{ player.profile.sicherungskasten }}</div> {% endcomment %}
