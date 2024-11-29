@@ -29,7 +29,7 @@
 {% partialdef add-player %}
 <div id="add-player-{{ side }}" class="add-player" {% if oob %}hx-swap-oob="true"{% endif %}>
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <button class="btn {% if side == 'easyVerein' %}btn-success{% else %}btn-warning{% endif %} dropdown-toggle" type="button" data-bs-toggle="dropdown" style="background-color: {% if side == 'easyVerein' %}#23985d{% else %}orange{% endif %};">
           Spieler hinzufügen
         </button>
         <ul class="dropdown-menu">
@@ -47,7 +47,7 @@
 {% partialdef player-badge %}
 {% if player %}
 <div class="player-badge position-relative">
-    <img src="{{ player.profile.image_url }}" alt="{{ player }}" style="border-radius: 100%; max-width:6em; max-height:6em;">
+    <img src="{{ player.profile.image_url }}" alt="{{ player }}" style="border-radius: 100%; width: 7em; height: 7em; border: 3px solid {% if side == 'easyVerein' %}#23985d{% elif not side %}black{% else %}orange{% endif %}">
     <div sse-swap="player-sicherungskasten-badge-{{ player.id }}">
         {% partialdef player-sicherungskasten-badge inline=True %}
         {% comment %} <div class="position-absolute top-0 end-0 badge rounded-pill {% if player.profile.sicherungskasten >= 6 %}bg-success{% elif player.profile.sicherungskasten >= 2 %}bg-warning{% else %}bg-danger{% endif %}">{{ player.profile.sicherungskasten }}</div> {% endcomment %}
@@ -58,7 +58,12 @@
     {% endif %}
     {% if side %}
     <div>
-        <button class="btn btn-danger position-absolute bottom-0 end-0" hx-post="/remove-player/{{ side }}/{{ player.id }}" hx-disabled-elt="this">x</button>
+        <div class="position-absolute bottom-0 end-0" hx-post="/remove-player/{{ side }}/{{ player.id }}" hx-disabled-elt="this" style="cursor: pointer;">
+        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bg-danger" style="border-radius:100%;">
+                <path d="M16 8L12 12M12 12L8 16M12 12L8 8M12 12L16 16" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="10" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -72,7 +77,7 @@
     {% endwith %}
 
     {% if leftPlayer and rightPlayer %}
-        <button class="btn btn-secondary" hx-post="/swap-players/{{ side }}" hx-swap="none" hx-disabled-elt="this">&larr; Spieler tauschen &rarr;</button>
+        <button class="btn {% if side == 'easyVerein' %}btn-success{% else %}btn-warning{% endif %}" style="background-color: {% if side == 'easyVerein' %}#23985d{% else %}orange{% endif %}" hx-post="/swap-players/{{ side }}" hx-swap="none" hx-disabled-elt="this">&larr; Spieler tauschen &rarr;</button>
     {% else %}
         {% partial add-player %}
     {% endif %}
