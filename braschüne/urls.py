@@ -32,6 +32,8 @@ urlpatterns = [
     path("end-game", views.endGame, name="end-game"),
     path("sse", views.sse, name="sse"),
 
+    path('inside/', views.inside, name='inside'),
+
     path("done-beer/<int:beerId>", views.doneBeer, name="done-beer"),
     path("delete-beer/<int:beerId>", views.deleteBeer, name="delete-beer"),
 

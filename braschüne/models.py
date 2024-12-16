@@ -39,6 +39,15 @@ class Profile(models.Model):
             except Exception as e:
                 print(e)
 
+    def toggle_inside(self):
+        try:
+            response = requests.get(f"https://inside.software-design.de/timetracking/toggle_tag_id/{self.inside_tag_id}/")
+            response.raise_for_status()
+            data = response.json()
+            return data
+        except Exception as e:
+            print(e)
+
 
 class Beer(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="from_user")

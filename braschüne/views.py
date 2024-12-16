@@ -244,3 +244,9 @@ class ProfileView(View):
             profile_form.save()
             return render(request, f"{self.template_name}#profile-form", self.get_context_data({"profile_form": profile_form}))
 
+@login_required
+def inside(request):
+    if request.method == 'POST':
+        message = request.user.profile.toggle_inside()
+        return render(request, 'accounts/inside.html#user', {'message': message})
+    return render(request, 'accounts/inside.html', {})

@@ -1,0 +1,24 @@
+{% extends "braschüne/base.html" %}
+{% load partials %}
+
+{% block title %}Profil{% endblock title %}
+
+{% block content %}
+<div class="mt-3">
+    <div>
+        <div id="user">
+            {% partialdef user inline=True %}
+            <div class="position-relative">
+                <img src="{{ request.user.profile.image }}" alt="{{ request.user }}" style="border-radius: 100%; max-width:12em; max-height:12em;" class="border">
+                {% if request.user.profile.is_online_in_inside %}
+                <div class="position-absolute top-0 start-0  badge rounded-pill bg-success">Bei der Arbeit</div>
+                {% else %}
+                <div class="position-absolute top-0 start-0  badge rounded-pill bg-danger">Ausgeloggt</div>
+                {% endif %}
+            </div>
+            {% endpartialdef %}
+        </div>
+        <button class="btn btn-primary" hx-post="/inside/" hx-target="#user" hx-disabled-elt="this">Toggle</button>
+    </div>
+</div>
+{% endblock content %}
